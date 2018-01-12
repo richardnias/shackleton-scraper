@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional, Dict, Union, Sequence
 
 import requests
+from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
 # import click
@@ -105,7 +106,10 @@ def download_image(url: str, fp: str) -> None:
 def main(output_dir: str = os.path.dirname(__file__)):
     for dt, img in walk(START_URL):
         fp = os.path.join(output_dir, '{}.jpg'.format(dt.isoformat()))
-        download_image(img, fp)
+        try:
+            download_image(img, fp)
+        except HTTPError:
+            print('Error downloading image for {}, skipping'.format(dt.isoformat()))
         print('{} downloaded'.format(fp))
 
 
